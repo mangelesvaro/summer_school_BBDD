@@ -245,12 +245,8 @@ ON
     a.estadillo = g.estadillo;
 ```
 
-![](./Auxiliares/Resumen_parcela.png)
+![](./Auxiliares/Resumen_parcela.PNG)
 
-![](./Auxiliares/Resumen_parcela2.png)
-
-
-
-![](./Auxiliares/Cremientos3.png)
+![](./Auxiliares/Resumen_parcela2.PNG)
 
 
