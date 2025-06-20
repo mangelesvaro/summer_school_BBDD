@@ -109,54 +109,27 @@ Veamos el contenido de la tabla de Pies Mayores.
 
 ![](./Auxiliares/Introducir_csv3.png)
 
-```r
-#Leer tabla de pies mayores
-PCMayores <- dbReadTable(con, "PCMayores")
 
-#Nombre de los campos de la tabla
-names(PCMayores)
-```
-
-```r annotate
-##  [1] "Estadillo" "Cla"       "Subclase"  "nArbol"    "OrdenIf3"  "OrdenIf2" 
-##  [7] "Rumbo"     "Distanci"  "DRed"      "Especie"   "Dn1"       "Dn2"      
-## [13] "Ht"        "Calidad"   "Forma"     "ParEsp"    "Agente"    "Import"   
-## [19] "Elemento"  "Compara"
-```
-
-Al tratarse de una base de datos relacional, para cada *Estadillo* o parcela de la tabla *PCParcelas* existen varios elementos u observaciones que corresponden en la tabla *PCMayores*. Ahora deben seleccionarse los pies de las parcelas que están incluidos en el interior del monte.
-
-```r
-#Unión de tablas por el concepto común Estadillo
-Pies.IFN3.monte<-merge(IFN3.monte,PCMayores,by="Estadillo",all.x=TRUE)
-```
 
 ### 1.3. Análisis de los datos
 
 Se va a analizar el crecimiento en diámetros y altura de los pies de la especie *Abies pinsapo* (código 32 en las tablas del IFN)
 
-Por un lado, en el Inventario Forestal Nacional, el diámetro normal se mide cuidadosamente a 1,30 m del suelo, con una forcípula graduada para apreciar el milímetro, en dos direcciones perpendiculares, de tal manera que, en la primera de ellas, el eje del aparato esté alineado con el centro de la parcela. 
+Por un lado, en el Inventario Forestal Nacional, el diámetro normal se mide cuidadosamente a 1,30 m del suelo, con una forcípula graduada para apreciar el milímetro, en dos direcciones perpendiculares, de tal manera que, en la primera de ellas, el eje del aparato esté alineado con el centro de la parcela. Para el análisis de datos, necesitamos el valor medio de ambas mediciones.
 
+Para el IFN2
 
-Para el análisis de datos, necesitamos el valor medio de ambas mediciones.
-
-```r
-#Cálculo de valor medio del diámetro normal en IFN2
-Pies.monte.IFN$DN.IF2<-(Pies.monte.IFN$DN1.IFN2+Pies.monte.IFN$DN2.IFN2)/2
-
-#Cálculo de valor medio del diámetro normal en IFN3
-Pies.monte.IFN$DN.IFN3<-(Pies.monte.IFN$DN1+Pies.monte.IFN$DN2)/2
-
-#Diferencias de diámetros entre los 2 tiempos
-Pies.monte.IFN$Dif.DN<-Pies.monte.IFN$DN.IFN3-Pies.monte.IFN$DN.IF2
-
-#Diferencias de alturas entre los 2 tiempos
-Pies.monte.IFN$Dif.H<-Pies.monte.IFN$HT-Pies.monte.IFN$HT.IFN2
-
-#Eliminación de errores de medición
-Pies.monte.IFN<-Pies.monte.IFN[which(Pies.monte.IFN$Dif.DN>0&
-                                       Pies.monte.IFN$Dif.H>0),]
+```sql
+CREATE VIEW diam_medio_IFN2 AS
+SELECT
+    estadillo AS estadillo,
+	numorden AS numorden,
+	(diametro1 + diametro2)/2 as Dn
+FROM
+    PIESMA29
 ```
+
+
 
 Se va a evaluar más concretamente la especie de pinsapo, que corresponde a la de código 32.
 
