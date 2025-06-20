@@ -7,9 +7,15 @@ Mª Ángeles Varo Martínez y Rafael Mª Navarro Cerrillo
 
 Se va a trabajar con el monte público Pinar de Yunquera, con código MA-30037-AY. Se trata de un monte de unas 2.000 ha de titularidad pública, perteneciente al Ayuntamiento de Yunquera y cuya gestión ha venido realizando la Consejería de Medio Ambiente de la Junta de Andalucía. Está localizado en el interior del Parque Nacional Sierra de las Nieves y contiene una variedad florística de incalculable valor.
 
-## 1. TIPOS DE BASES DE DATOS
+## 1. Tipos de Bases de datos
 
-## PROCESADO DE INFORMACIÓN EN BASES DE DATOS RELACIONALES
+La función principal de una base de datos es almacenar información. Con este criterio tan genérico hay muchas soluciones y muchos tipos de bases de datos, con características muy distintas y, como consecuencia, existen múltiples formas de clasificarlas. Una de las clasificaciones que más se utiliza en la actualidad distingue entre bases de datos relacionales SQL y bases de datos no relacionales o NoSQL. 
+
+![](./Auxiliares/Tipos_BBDD.png)
+
+SQL es el lenguaje que se utiliza para administrar y recuperar las bases de datos relacionales y que ha terminado identificándolas.
+
+### Procesado de información en Bases de Datos relacionales
 
 La información que proporcionan las parcelas medidas en una única ocasión no se incluye, lógicamente, el crecimiento de las variables dendrométricas y dasométricas, por lo que con esos datos no es posible utilizar determinadas técnicas de ajuste estadístico que resultan muy efectivas y prácticas si se dispone de datos de crecimiento. Por tanto, a partir de los datos de un único inventario sólo es posible la elaboración de modelos estáticos, como son las tablas de producción de selvicultura media observada, que reflejan únicamente un número limitado de evoluciones de la densidad, o los diagramas de manejo de la densidad. La realización de un segundo inventario permite disponer de datos reales de crecimiento, lo que posibilita el desarrollo de modelos dinámicos, más realistas que los estáticos.
 
