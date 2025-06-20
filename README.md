@@ -117,187 +117,139 @@ Se va a analizar el crecimiento en diámetros y altura de los pies de la especie
 
 Por un lado, en el Inventario Forestal Nacional, el diámetro normal se mide cuidadosamente a 1,30 m del suelo, con una forcípula graduada para apreciar el milímetro, en dos direcciones perpendiculares, de tal manera que, en la primera de ellas, el eje del aparato esté alineado con el centro de la parcela. Para el análisis de datos, necesitamos el valor medio de ambas mediciones.
 
-Para el IFN2
+En SQL, las operaciones entre campos se realizan principalmente usando operadores aritméticos, lógicos y funciones de agregación. Estas operaciones permiten realizar cálculos y comparaciones con los datos almacenados en las columnas de una tabla, o entre campos de diferentes tablas. Los operadores aritméticos como + (suma), - (resta), * (multiplicación), / (división) y % (módulo) se utilizan para realizar cálculos numéricos entre campos. Además, los operadores lógicos como *AND*, *OR*, *NOT* se utilizan para combinar condiciones y filtrar datos basados en múltiples criterios.
+
+En el ejemplo, del IFN2 sería:
 
 ```sql
 CREATE VIEW diam_medio_IFN2 AS
 SELECT
     estadillo AS estadillo,
-	numorden AS numorden,
-	(diametro1 + diametro2)/2 as Dn
+    numorden AS numorden,
+    (diametro1 + diametro2)/2 as Dn
 FROM
     PIESMA29
 ```
 
+El resultado de esta consulta tendría este aspecto:
 
+![](./Auxiliares/diam_medio_IFN2.png)
 
-Se va a evaluar más concretamente la especie de pinsapo, que corresponde a la de código 32.
+Como se va a evaluar más concretamente la especie de pinsapo, que corresponde a la de código 32 y también se va a evaluar los cambios en altura de los pies entre los 2 inventarios, incluímos el campo correspondiente y le pedimos que seleccione sólo donde la especie sea la de objeto de estudio.
 
-```r
-#Pies de pinsapo
-pinsapo<-Pies.monte.IFN[which(Pies.monte.IFN$ESPECIE.x=="032"),]
+La cláusula WHERE en SQL se utiliza para filtrar los datos que se devuelven en una consulta. Permite especificar condiciones que deben cumplirse para que una fila sea incluida en el resultado. En esencia, ayuda a seleccionar solo los registros relevantes de una tabla basándose en ciertos criterios.
 
-#Parcelas de pinsapo
-parcelas.pinsapo<-unique(pinsapo[,c('ESTADILLO', 'geometry')])
+```sql
+CREATE VIEW diam_medio_alt_IFN2_pinsapo AS
+SELECT
+    estadillo AS estadillo,
+    numorden AS numorden,
+    altura AS altura,
+    (diametro1 + diametro2)/2 as Dn
+FROM
+    PIESMA29
+WHERE
+    especie = 32
 ```
 
-Será interesante conocer cómo se comportan los crecimientos en altura y en diámetro normal según las densidades de la parcela y ver qué patrón espacial representa el resultado. Por eso, se agregan los valores medios por parcela y se le añaden los valores del resumen del total de densidad de pies de cada parcela y la geometría de las parcelas.
+Para la tabla del IFN3, es necesario hacer distintas adaptaciones del código. Por un lado, para garantizar la integridad de los datos sería conveniente renombrar los campos de forma similar al inventario anterior. Y además, se necesita un campo que enlace ambas mediciones temporales, que en este caso es *OrdnIf2*, que se refiere a *numorden* en el IFN2.
 
-```r
-#Valores medios de crecimientos por ESTADILLO
-resumen.pinsapo<-aggregate(cbind(Dif.DN,Dif.H)~ESTADILLO,
-                     data=pinsapo,FUN=mean,na.rm=TRUE)
-
-#Añadir valores de densidad de las parcelas
-resumen.pinsapo<-merge(resumen.pinsapo,resumen.parcela,by="ESTADILLO")
-
-#Añadir geometría
-resumen.pinsapo<-merge(resumen.pinsapo,parcelas.pinsapo,by="ESTADILLO")
-
-#Conversión de la tabla en datos geográficos
-resumen.pinsapo<-st_as_sf(resumen.pinsapo)
+```sql
+CREATE VIEW diam_medio_alt_IFN3_pinsapo AS
+SELECT
+    Estadillo AS estadillo,
+    OrdenIf2 AS numorden,
+    OrdenIf3 As numorden3,
+    Ht AS alturaIF3,
+    (Dn1 + Dn2)/2 as DnIF3
+FROM
+    PCMayores
+WHERE 
+    OrdenIf2!=0 and OrdenIf2!=999 and OrdenIf3!=888 and Especie = 32
 ```
 
-Se puede explorar la asociación de interdependencia que cabría pensar que pudiera existir entre los crecimientos en altura y en diámetro, con la densidad de la parcela. 
+Ahora se van a unir las 2 tablas, los datos del IFN2 y los del IFN3. Ésto se realiza en SQL con una cláusula que se conoce como un *JOIN*, que permite combinar registros de una o más tablas en una base de datos. En el Lenguaje de Consultas Estructurado hay tres tipos de JOIN: interno, externo y cruzado. El estándar ANSI del SQL especifica cinco tipos de JOIN: INNER, LEFT OUTER, RIGHT OUTER, FULL OUTER y CROSS. 
 
-Para saber cuál método usar para calcular el coeficiente de correlación entre las variables, primero es necesario explorar si tienen una distribución normal.
-
-```r
-#Histograma de los datos de altura
-hist(resumen.pinsapo$Dif.H)
+```sql
+CREATE VIEW IFN2_IFN3 AS
+SELECT
+    a.*,
+    b.*
+FROM
+    diam_medio_alt_IFN2_pinsapo as a
+JOIN
+    diam_medio_alt_IFN3_pinsapo as b
+ON
+    p.estadillo = g.estadillo and p.numorden = g.numorden
 ```
 
-![](./Auxiliares/Dif.H.png)
+Y se calcula su crecimiento como diferencias entre los campos y limitando los resultados para evitar posibles errores
 
-```r
-#Histograma de los datos de dap
-hist(resumen.pinsapo$Dif.DN)
+```sql
+CREATE VIEW crecimiento_pinsapo AS
+SELECT *,
+       DnIF3 - Dn AS dif_dn,
+       (alturaIF3 - altura) AS dif_h
+FROM IFN2_IFN3
+WHERE DnIF3 > Dn
+  AND alturaIF3 > altura;
 ```
 
-![](./Auxiliares/Dif.DN.png)
+Para hacer un resumen por parcela, se usa la cláusula *GROUP BY* que agrupa filas que tienen los mismos valores en una o más columnas. Se usa comúnmente con funciones de agregación (como *COUNT*, *SUM*, *AVG*, etc.) para realizar cálculos sobre cada grupo de filas. En este caso, se utiliza una agrupación sobre *estadillo* para emplear la función de agregación de la media *AVG*.
 
-```r
-#Histograma de los datos de dap
-hist(resumen.pinsapo$Npies_parc)
+```sql
+CREATE VIEW resumen_pinsapo AS
+SELECT
+    estadillo,
+    AVG(dif_dn) AS media_dif_dn,
+    AVG(dif_h) AS media_dif_h
+FROM
+    crecimiento_pinsapo
+GROUP BY
+    estadillo;
 ```
-
-![](./Auxiliares/Npies_parc.png)
-
-Ninguna de las variables sigue una distribución normal, por lo que el método empleado será el de Spearman.
-
-```r
-#Test de correlación entre las alturas y las densidades
-correlacion.alturas<-cor.test(resumen.pinsapo$Dif.H,
-                              resumen.pinsapo$Npies_parc,
-                              method="spearman")
-
-#Correlación entre las alturas y las densidades
-correlacion.alturas$estimate
-```
-
-```r annotate
-##       rho 
-## 0.4457831
-```
-
-```r
-#Significancia de la correlación entre las alturas y las densidades
-correlacion.alturas$p.value
-```
-
-```r annotate
-## [1] 0.268289
-```
-
-```r
-#Test de correlación entre los diámetros y las densidades
-correlacion.diametros<-cor.test(resumen.pinsapo$Dif.DN,
-                                resumen.pinsapo$Npies_parc,
-                                method="spearman")
-
-#Correlación entre los diámetros y las densidades
-correlacion.diametros$estimate
-```
-
-```r annotate
-##        rho 
-## -0.3493976 
-```
-
-```r
-#Significancia de la correlación entre las alturas y las densidades
-correlacion.diametros$p.value
-```
-
-```r annotate
-## [1] 0.3962443
-```
-
-Ninguna de las correlaciones con la densidad parece tener significancia estadística (*p-valores* por encima de 0.05). Sin embargo, este bajo valor es probable que se deba a la muestra tan pequeña de parcelas en la que se ha empleado, tan sólo 8 parcelas (Ver el número de registros de la tabla *resumen.pinsapo*). Sería necesario aumentar la superficie de estudio y, por tanto, el número de parcelas, para contrastar los resultados, ya que la asociación de interdependencia esperada responde a una hipótesis plausible y lógica contrastada en el mundo forestal. 
 
 ### 1.4. Visualización de los datos
 
 Se puede entender la dinámica general del crecimiento en las especies forestales del monte, a través de un gráfico donde se representen los segmentos de crecimiento de cada uno de los pies.
 
-```r
-plot(0,0,col = "white",
-     xlim=c(80,900),ylim=c(0,21),main="Crecimientos.Todas las especies",
-     xlab="dap (mm)", ylab="altura (m)")
-segments(Pies.monte.IFN$DN.IFN3,Pies.monte.IFN$HT,
-         Pies.monte.IFN$DN.IF2,Pies.monte.IFN$HT.IFN2,
-         col=rgb(0,0,0,0.35))
+Ahora que ya tenemos resultados de valores diámetros y altura para *A. pinsapo* podría resultar interesante visualizarlos para comparar su evolución. Para ello se va a utilizar el complemento de QGIS Plotly, que permite la realización de distintos gráficos personalizables vinculados a capas vectoriales y tablas. Se instala a través del instalador de complementos de QGIS.
+
+![](./Auxiliares/Data_plotly.png)
+
+Una vez instalado, es necesario exportar la tabla a la capas del proyecto de QGIS para poder interactuar con el plugin. 
+
+![](./Auxiliares/Data_plotly2.png)
+
+Se seleccionarán los campos a representar y el tipo de gráfico a utilizar.
+
+![](./Auxiliares/Data_plotly3.png)
+
+Los crecimientos se puede entender mejor visualmente como histogramas de datos de esas diferencias.
+
+![](./Auxiliares/Data_plotly5.png)
+
+![](./Auxiliares/Data_plotly6.png)
+
+Y al unirlo con la tabla espacial se puede obtener una representación espacial de los resultados.
+
+```sql
+SELECT
+    a.*,
+    g.geometry
+FROM
+    CR_pinsapo_parcela as a
+JOIN
+    PCParcelas as g
+ON
+    a.estadillo = g.estadillo;
 ```
 
-![](./Auxiliares/Cremientos.png)
+![](./Auxiliares/Resumen_parcela.png)
 
-Si se particulariza a nivel especie, se pueden intuir dinámicas distintas.
+![](./Auxiliares/Resumen_parcela2.png)
 
-```{r }
-plot(0,0,col = "white",
-     xlim=c(80,900),ylim=c(0,21),main="Crecimientos.Todas las especies",
-     xlab="dap (mm)", ylab="altura (m)")
-#Especie 021="Pinus sylvestris"
-segments(Pies.monte.IFN$DN.IFN3[which(Pies.monte.IFN$ESPECIE.x=="021")], 
-         Pies.monte.IFN$HT[which(Pies.monte.IFN$ESPECIE.x=="021")],
-         Pies.monte.IFN$DN.IF2[which(Pies.monte.IFN$ESPECIE.x=="021")],
-         Pies.monte.IFN$HT.IFN2[which(Pies.monte.IFN$ESPECIE.x=="021")],
-         col="red")
-#Especie 024="Pinus halepensis"
-segments(Pies.monte.IFN$DN.IFN3[which(Pies.monte.IFN$ESPECIE.x=="024")], 
-         Pies.monte.IFN$HT[which(Pies.monte.IFN$ESPECIE.x=="024")],
-         Pies.monte.IFN$DN.IF2[which(Pies.monte.IFN$ESPECIE.x=="024")],
-         Pies.monte.IFN$HT.IFN2[which(Pies.monte.IFN$ESPECIE.x=="024")],
-         col="green")
-#Especie 026="Pinus pinaster"
-segments(Pies.monte.IFN$DN.IFN3[which(Pies.monte.IFN$ESPECIE.x=="026")],
-         Pies.monte.IFN$HT[which(Pies.monte.IFN$ESPECIE.x=="026")],
-         Pies.monte.IFN$DN.IF2[which(Pies.monte.IFN$ESPECIE.x=="026")],
-         Pies.monte.IFN$HT.IFN2[which(Pies.monte.IFN$ESPECIE.x=="026")],
-         col="black")
-#Especie 032="Abies pinsapo"
-segments(Pies.monte.IFN$DN.IFN3[which(Pies.monte.IFN$ESPECIE.x=="032")],
-         Pies.monte.IFN$HT[which(Pies.monte.IFN$ESPECIE.x=="032")],
-         Pies.monte.IFN$DN.IF2[which(Pies.monte.IFN$ESPECIE.x=="032")],
-         Pies.monte.IFN$HT.IFN2[which(Pies.monte.IFN$ESPECIE.x=="032")],
-         col="blue")
-legend("bottomright",legend=c("Pinus sylvestris","Pinus halepensis",
-                              "Pinus pinaster","Abies pinsapo"),
-       col=c("red","green","black","blue"),lty=c(1,1,1,1),cex=0.75,
-       box.lty=0)
-```
 
-![](./Auxiliares/Cremientos2.png)
-
-La especie que parece mostrar mayor variabilidad de comportamiento en su crecimiento es el pinsapo. Por eso, se va a particularizar para dicha especie.
-
-```{r }
-plot(0,0,col = "white",
-     xlim=c(80,900),ylim=c(0,21),main="Crecimientos.Pinsapo",
-     xlab="dap (mm)", ylab="altura (m)")
-segments(pinsapo$DN.IFN3,pinsapo$HT,
-         pinsapo$DN.IF2,pinsapo$HT.IFN2,
-         col=rgb(0,0,0,0.35))
-```
 
 ![](./Auxiliares/Cremientos3.png)
 
