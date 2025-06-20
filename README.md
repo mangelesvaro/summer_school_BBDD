@@ -219,17 +219,17 @@ Ahora que ya tenemos resultados de valores diámetros y altura para *A. pinsapo*
 
 Una vez instalado, es necesario exportar la tabla a la capas del proyecto de QGIS para poder interactuar con el plugin. 
 
-![](./Auxiliares/Data_plotly2.png)
+![](./Auxiliares/Data_plotly2.PNG)
 
 Se seleccionarán los campos a representar y el tipo de gráfico a utilizar.
 
-![](./Auxiliares/Data_plotly3.png)
+![](./Auxiliares/Data_plotly3.PNG)
 
 Los crecimientos se puede entender mejor visualmente como histogramas de datos de esas diferencias.
 
-![](./Auxiliares/Data_plotly5.png)
+![](./Auxiliares/Data_plotly5.PNG)
 
-![](./Auxiliares/Data_plotly6.png)
+![](./Auxiliares/Data_plotly6.PNG)
 
 Y al unirlo con la tabla espacial se puede obtener una representación espacial de los resultados.
 
