@@ -24,7 +24,9 @@ La función principal de una base de datos es almacenar información. Con este c
 
 ![](./Auxiliares/Tipos_BBDD.png)
 
-SQL es el lenguaje que se utiliza para administrar y recuperar las bases de datos relacionales y que ha terminado identificándolas.
+Las bases de datos no relacionales, también conocidas como bases de datos NoSQL, son sistemas de gestión de datos que no utilizan el modelo tabular de filas y columnas de las bases de datos relacionales tradicionales. En su lugar, ofrecen modelos de almacenamiento más flexibles y escalables, optimizados para tipos específicos de datos y necesidades de aplicaciones.
+
+SQL es el lenguaje que se utiliza para administrar y recuperar las bases de datos relacionales y que ha terminado identificándolas. En este workshop nos vamos a centrar en este tipo de bases de datos.
 
 ### Procesado de información en Bases de Datos relacionales
 
