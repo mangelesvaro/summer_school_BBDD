@@ -3,7 +3,20 @@ Archivos relacionados con el workshop Introducción a las BBDD y SQL del Summer 
 
 # Workshop Introducción a bases de datos y SQL
 
-Se va a trabajar con el monte público Pinar de Yunquera, con código MA-30037-AY. Se trata de un monte de unas 2.000 ha de titularidad pública, perteneciente al Ayuntamiento de Yunquera y cuya gestión ha venido realizando la Consejería de Medio Ambiente de la Junta de Andalucía. Está localizado en el interior del Parque Nacional Sierra de las Nieves y contiene una variedad florística de incalculable valor.
+La información que proporcionan las parcelas medidas en una única ocasión no incluye, lógicamente, el crecimiento de las variables dendrométricas y dasométricas, por lo que con esos datos no es posible utilizar determinadas técnicas de ajuste estadístico que resultan muy efectivas y prácticas si se dispone de datos de crecimiento. Por tanto, a partir de los datos de un único inventario sólo es posible la elaboración de modelos estáticos, como son las tablas de producción de selvicultura media observada, que reflejan únicamente un número limitado de evoluciones de la densidad, o los diagramas de manejo de la densidad. La realización de un segundo inventario permite disponer de datos reales de crecimiento, lo que posibilita el desarrollo de modelos dinámicos, más realistas que los estáticos.
+
+Se va a trabajar con los datos de los Inventarios Forestales Nacionales. El Inventario Forestal Nacional (IFN) podría definirse como un proyecto encaminado a obtener el máximo de información posible sobre la situación, régimen de propiedad y protección, naturaleza, estado legal, probable evolución y capacidad productora de todo tipo de bienes de los montes españoles. Este inventario caracteriza los tipos de montes en España, cuantificando los recursos forestales disponibles, y presentando datos de densidades, existencias, crecimientos, etc., y facilitando otros parámetros que describen los bosques y las superficies desarboladas en España así como su biodiversidad, todo ello con una metodología y características comunes para todo el territorio. El inventario proporciona una información estadística homogénea y adecuada sobre el estado y la evolución de los ecosistemas forestales españoles que sirve, entre otros, como instrumento para la coordinación de las políticas forestales y de conservación de la naturaleza. La unidad básica de trabajo es la provincia y, al ser un inventario continuo, se repiten las mismas mediciones cada 10 años, recorriéndose todo el territorio nacional en cada ciclo decenal [^1]
+
+[^1]:https://www.mapa.gob.es/es/desarrollo-rural/estadisticas/Inventarios_nacionales.aspx
+
+
+![](./Auxiliares/Parcela_IFN.png)
+
+
+![](./Auxiliares/Parcela_IFN2.png)
+
+En la página web del Ministerio para la Transición Ecológica y el Reto Demográfico se puede encontrar [documentación relativa para la descripción de las tablas y códigos utilizados en esta base de datos.](https://www.miteco.gob.es/es/biodiversidad/servicios/banco-datos-naturaleza/documentador_bdcampo_ifn3_tcm30-282240.pdf)  
+
 
 ## 1. Tipos de Bases de datos
 
@@ -14,14 +27,6 @@ La función principal de una base de datos es almacenar información. Con este c
 SQL es el lenguaje que se utiliza para administrar y recuperar las bases de datos relacionales y que ha terminado identificándolas.
 
 ### Procesado de información en Bases de Datos relacionales
-
-La información que proporcionan las parcelas medidas en una única ocasión no se incluye, lógicamente, el crecimiento de las variables dendrométricas y dasométricas, por lo que con esos datos no es posible utilizar determinadas técnicas de ajuste estadístico que resultan muy efectivas y prácticas si se dispone de datos de crecimiento. Por tanto, a partir de los datos de un único inventario sólo es posible la elaboración de modelos estáticos, como son las tablas de producción de selvicultura media observada, que reflejan únicamente un número limitado de evoluciones de la densidad, o los diagramas de manejo de la densidad. La realización de un segundo inventario permite disponer de datos reales de crecimiento, lo que posibilita el desarrollo de modelos dinámicos, más realistas que los estáticos.
-
-El Inventario Forestal Nacional (IFN) podría definirse como un proyecto encaminado a obtener el máximo de información posible sobre la situación, régimen de propiedad y protección, naturaleza, estado legal, probable evolución y capacidad productora de todo tipo de bienes de los montes españoles. Este inventario caracteriza los tipos de montes en España, cuantificando los recursos forestales disponibles, y presentando datos de densidades, existencias, crecimientos, etc., y facilitando otros parámetros que describen los bosques y las superficies desarboladas en España así como su biodiversidad, todo ello con una metodología y características comunes para todo el territorio. El inventario proporciona una información estadística homogénea y adecuada sobre el estado y la evolución de los ecosistemas forestales españoles que sirve, entre otros, como instrumento para la coordinación de las políticas forestales y de conservación de la naturaleza. La unidad básica de trabajo es la provincia y, al ser un inventario continuo, se repiten las mismas mediciones cada 10 años, recorriéndose todo el territorio nacional en cada ciclo decenal [^1]
-
-[^1]:https://www.mapa.gob.es/es/desarrollo-rural/estadisticas/Inventarios_nacionales.aspx
-
-En la página web del Ministerio para la Transición Ecológica y el Reto Demográfico se puede encontrar [documentación relativa para la descripción de las tablas y códigos utilizados en esta base de datos.](https://www.miteco.gob.es/es/biodiversidad/servicios/banco-datos-naturaleza/documentador_bdcampo_ifn3_tcm30-282240.pdf)  
 
 Los diferentes organismos con competencia en materia forestal dedican mucho tiempo y recursos para obtener, procesar e interpretar datos. Asimismo, cada administración abarca un ámbito específico, ya sea a nivel territorial, como municipal, provincial, autonómico o estatal, o a nivel competencial. Por ejemplo, cada ministerio se enfoca en datos de áreas concretas como transición ecológica, sanidad, movilidad, entre otras. En la actualidad, las administraciones públicas gestionan vastas cantidades de datos en diversos formatos y con diferentes métodos de gestión. El análisis de datos forestales, dada la variedad de fuentes y formatos disponibles, requiere, previo a su utilización, de procesos que permitan su uso conjunto. Generalmente, para la utilización de los datos, se consideran necesarias 5 etapas, que son las que vamos a seguir en la práctica:
 
@@ -43,7 +48,7 @@ Todos los datos se encuentran disponibles a través de la web del Ministerio par
 
 #### 1.1.2. IFN3
 
-La información del tercer ciclo del Inventario Forestal Nacional (IFN3) fue realizado entre los años 1997-2007 y se encuentra disponible en ficheros MDB de Access comprimidos en formato ZIP o bien en formato .accdb a través de la web del Ministerio para la Transición Ecológica y el Reto Demográfico en [este enlace.](https://www.miteco.gob.es/es/biodiversidad/servicios/banco-datos-naturaleza/informacion-disponible/ifn3_base_datos_26_50.aspx)
+La información del tercer ciclo del Inventario Forestal Nacional (IFN3) fue realizado entre los años 1997-2007 y se encuentra disponible en ficheros MDB de Access comprimidos en formato ZIP o bien en formato .accdb a través de la web del Ministerio para la Transición Ecológica y el Reto Demográfico en [este enlace.](https://www.miteco.gob.es/es/biodiversidad/servicios/banco-datos-naturaleza/informacion-disponible/ifn3_bbdd_descargas_htm.html)
 
 ![](./Auxiliares/IFN3.jpg)
 
@@ -61,7 +66,7 @@ Usando el panel del navegador, podemos crear una nueva base de datos SpatiaLite 
 
 ![](./Auxiliares/Crear_BBDD_Spatialite.png)
 
-Posteriormente, usando el administrador de Bases de Datos de Qgis podremos acceder a ella.
+Posteriormente, usando el administrador de Bases de Datos de Qgis podremos acceder a ella. El Administrador de Bases de Datos de QGIS es una herramienta integrada que permite gestionar y acceder a diversas bases de datos espaciales, como PostGIS, SpatiaLite, GeoPackage, entre otras, así como a capas virtuales. Esta herramienta facilita la conexión, importación, exportación y manipulación de datos espaciales dentro de QGIS, incluyendo la ejecución de consultas SQL
 
 ![](./Auxiliares/Administrador_BBDD.png)
 
@@ -113,13 +118,15 @@ Veamos el contenido de la tabla de Pies Mayores.
 
 ### 1.3. Análisis de los datos
 
-Se va a analizar el crecimiento en diámetros y altura de los pies de la especie *Abies pinsapo* (código 32 en las tablas del IFN)
+El análisis se realizará a través de consultas a la base de datos. Una consulta SQL es una instrucción escrita en el lenguaje SQL que se utiliza para interactuar con bases de datos. Estas consultas permiten realizar diversas operaciones, como recuperar, insertar, actualizar o eliminar datos. En esencia, una consulta SQL es una solicitud a la base de datos para obtener información específica o realizar acciones sobre los datos almacenados.
 
-Por un lado, en el Inventario Forestal Nacional, el diámetro normal se mide cuidadosamente a 1,30 m del suelo, con una forcípula graduada para apreciar el milímetro, en dos direcciones perpendiculares, de tal manera que, en la primera de ellas, el eje del aparato esté alineado con el centro de la parcela. Para el análisis de datos, necesitamos el valor medio de ambas mediciones.
+Por otro lado, cuando una consulta SQL necesita operaciones entre campos, éstas se realizan principalmente usando operadores aritméticos, lógicos y funciones de agregación. Estas operaciones permiten realizar cálculos y comparaciones con los datos almacenados en las columnas de una tabla, o entre campos de diferentes tablas. Los operadores aritméticos como + (suma), - (resta), * (multiplicación), / (división) y % (módulo) se utilizan para realizar cálculos numéricos entre campos. Además, los operadores lógicos como *AND*, *OR*, *NOT* se utilizan para combinar condiciones y filtrar datos basados en múltiples criterios.
 
-En SQL, las operaciones entre campos se realizan principalmente usando operadores aritméticos, lógicos y funciones de agregación. Estas operaciones permiten realizar cálculos y comparaciones con los datos almacenados en las columnas de una tabla, o entre campos de diferentes tablas. Los operadores aritméticos como + (suma), - (resta), * (multiplicación), / (división) y % (módulo) se utilizan para realizar cálculos numéricos entre campos. Además, los operadores lógicos como *AND*, *OR*, *NOT* se utilizan para combinar condiciones y filtrar datos basados en múltiples criterios.
+Otro concepto importante es la diferencia entre vistas (*VIEW*) y tablas (*TABLE*). En SQL, una vista es una tabla virtual basada en el resultado de una consulta predefinida, mientras que una tabla es una estructura de almacenamiento físico de datos. Las vistas no almacenan datos directamente, sino que los recuperan de las tablas base cada vez que se consultan. Las tablas, por otro lado, almacenan físicamente los datos.
 
-En el ejemplo, del IFN2 sería:
+En el ejemplo del IFN, se va a analizar el crecimiento en diámetros y altura de los pies de la especie *Abies pinsapo* (código 32 en las tablas del IFN). Por un lado, en el Inventario Forestal Nacional, el diámetro normal se mide cuidadosamente a 1,30 m del suelo, con una forcípula graduada para apreciar el milímetro, en dos direcciones perpendiculares, de tal manera que, en la primera de ellas, el eje del aparato esté alineado con el centro de la parcela. Para el análisis de datos, necesitamos el valor medio de ambas mediciones.
+
+Para el IFN2 sería:
 
 ```sql
 CREATE VIEW diam_medio_IFN2 AS
@@ -137,15 +144,15 @@ El resultado de esta consulta tendría este aspecto:
 
 Como se va a evaluar más concretamente la especie de pinsapo, que corresponde a la de código 32 y también se va a evaluar los cambios en altura de los pies entre los 2 inventarios, incluímos el campo correspondiente y le pedimos que seleccione sólo donde la especie sea la de objeto de estudio.
 
-La cláusula WHERE en SQL se utiliza para filtrar los datos que se devuelven en una consulta. Permite especificar condiciones que deben cumplirse para que una fila sea incluida en el resultado. En esencia, ayuda a seleccionar solo los registros relevantes de una tabla basándose en ciertos criterios.
+La cláusula *WHERE* en SQL se utiliza para filtrar los datos que se devuelven en una consulta. Permite especificar condiciones que deben cumplirse para que una fila sea incluida en el resultado. En esencia, ayuda a seleccionar solo los registros relevantes de una tabla basándose en ciertos criterios.
 
 ```sql
 CREATE VIEW diam_medio_alt_IFN2_pinsapo AS
 SELECT
     estadillo AS estadillo,
     numorden AS numorden,
-    altura AS altura,
-    (diametro1 + diametro2)/2 as Dn
+    altura AS alturaIF2,
+    (diametro1 + diametro2)/2 as DnIF2
 FROM
     PIESMA29
 WHERE
@@ -188,11 +195,11 @@ Y se calcula su crecimiento como diferencias entre los campos y limitando los re
 ```sql
 CREATE VIEW crecimiento_pinsapo AS
 SELECT *,
-       DnIF3 - Dn AS dif_dn,
-       (alturaIF3 - altura) AS dif_h
+       DnIF3 - DnIF2 AS dif_dn,
+       (alturaIF3 - alturaIF3) AS dif_h
 FROM IFN2_IFN3
-WHERE DnIF3 > Dn
-  AND alturaIF3 > altura;
+WHERE DnIF3 > DnIF2
+  AND alturaIF3 > alturaIF2;
 ```
 
 Para hacer un resumen por parcela, se usa la cláusula *GROUP BY* que agrupa filas que tienen los mismos valores en una o más columnas. Se usa comúnmente con funciones de agregación (como *COUNT*, *SUM*, *AVG*, etc.) para realizar cálculos sobre cada grupo de filas. En este caso, se utiliza una agrupación sobre *estadillo* para emplear la función de agregación de la media *AVG*.
